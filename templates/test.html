@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Aditya AI - Test</title>
+</head>
+<body>
+    <h1>🤖 Aditya AI</h1>
+    <p>Template is working!</p>
+    <p>Tasks count: {{ tasks|length }}</p>
+    {% for task in tasks %}
+        <div>Task: {{ task.content }}</div>
+    {% endfor %}
+</body>
+</html>

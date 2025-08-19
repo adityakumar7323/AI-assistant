@@ -1,0 +1,17 @@
+#!/bin/zsh
+
+echo "🚀 QUICK SETUP: Get OpenAI API Key in 60 seconds!"
+echo ""
+echo "1️⃣  Go to: https://platform.openai.com/api-keys"
+echo "2️⃣  Sign in (or create free account)"
+echo "3️⃣  Click 'Create new secret key'"
+echo "4️⃣  Copy the key (starts with sk-)"
+echo "5️⃣  Run this command with YOUR key:"
+echo ""
+echo "   sed -i '' 's/sk-placeholder-replace-with-your-actual-openai-api-key-from-platform/YOUR_ACTUAL_KEY_HERE/' .env"
+echo ""
+echo "6️⃣  Restart Aditya AI:"
+echo "   ./start.sh"
+echo ""
+echo "🔗 Opening OpenAI API keys page..."
+open "https://platform.openai.com/api-keys"

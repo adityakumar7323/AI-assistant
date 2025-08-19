@@ -1,15 +1,35 @@
-# 🤖 AI-Powered Personal Assistant
+# 🤖 Aditya AI - AI-Powered Personal Assistant
 
-A minimal, lightweight AI-powered personal assistant built with Python Flask. This assistant can set reminders, schedule tasks, and answer basic questions through a clean web interface.
+A minimal, lightweight AI-powered personal assistant built with Python Flask. Aditya AI can set reminders, schedule tasks, analyze images, and answer questions through a clean web interface with Google Gemini AI integration.
 
 ## ✨ Features
 
 - **Natural Language Processing**: Understands reminders, scheduling requests, and questions
-- **Task Management**: Add, view, and delete reminders and scheduled tasks  
-- **Smart Responses**: Basic question answering with optional OpenAI integration
-- **Clean UI**: Modern, responsive web interface
-- **Lightweight**: Minimal dependencies, uses SQLite database
+- **Image Analysis**: Upload and analyze images using Google Gemini Vision AI
+- **Robust Task Management**: Add, view, update, and delete reminders and scheduled tasks with proper error handling
+- **Google Gemini Integration**: Smart responses powered by Google's latest AI model
+- **Clean UI**: Modern, responsive dark-themed ChatGPT-style web interface
+- **Lightweight**: Minimal dependencies, uses SQLite database with proper cursor management
+- **Error Handling**: Comprehensive try/catch blocks and friendly error messages
 - **Easy Setup**: Single command to get started
+
+## 🖼️ Image Analysis Capabilities
+
+- **Object Recognition**: Identify people, animals, objects, vehicles
+- **Scene Description**: Describe settings, locations, activities  
+- **Text Recognition**: Read text, signs, documents in images
+- **Technical Analysis**: Charts, graphs, diagrams, code screenshots
+- **Supported Formats**: PNG, JPG, JPEG, GIF, BMP, WEBP (max 16MB)
+
+## 🔧 Technical Improvements
+
+- **Google Gemini API**: Replaced OpenAI with Google's Gemini 1.5 Flash model
+- **Image Processing**: Added Pillow for image handling and analysis
+- **Fixed SQLite Issues**: Proper cursor usage, `cursor.lastrowid` instead of `connection.lastrowid`
+- **Enhanced Error Handling**: All database operations wrapped in try/except blocks
+- **Improved NLP**: Better intent detection, input cleaning, and response handling
+- **Robust API**: Proper HTTP status codes and JSON error responses
+- **Clean Code**: Follows best practices with proper function signatures
 
 ## 🚀 Quick Start
 
