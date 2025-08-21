@@ -28,7 +28,25 @@ init_db()
 
 @app.route('/')
 def index():
-    """Main page showing the assistant interface and current tasks/reminders"""
+    """Main page showing the professional Aditya AI interface"""
+    # Create session ID if doesn't exist
+    if 'session_id' not in session:
+        session['session_id'] = str(uuid.uuid4())
+    
+    return render_template('aditya_ai_pro.html')
+
+@app.route('/simple')
+def simple():
+    """Simple enhanced interface"""
+    # Create session ID if doesn't exist
+    if 'session_id' not in session:
+        session['session_id'] = str(uuid.uuid4())
+    
+    return render_template('aditya_ai.html')
+
+@app.route('/classic')
+def classic():
+    """Classic interface with tasks and chat history"""
     # Create session ID if doesn't exist
     if 'session_id' not in session:
         session['session_id'] = str(uuid.uuid4())
@@ -40,7 +58,7 @@ def index():
         tasks = get_tasks()
         return render_template('index.html', tasks=tasks, chat_history=chat_history, chat_stats=chat_stats)
     except Exception as e:
-        print(f"❌ Error loading index page: {e}")
+        print(f"❌ Error loading classic page: {e}")
         return render_template('index.html', tasks=[], chat_history=[], chat_stats={'total_messages': 0, 'recent_messages': 0})
 
 @app.route('/process', methods=['POST'])
@@ -71,10 +89,10 @@ def process():
 def ask():
     """Handle AI questions and task/reminder requests"""
     try:
-        user_input = request.json.get('query', '').strip()
+        user_input = request.json.get('question', '').strip()
         
         if not user_input:
-            return jsonify({'error': 'No query provided'}), 400
+            return jsonify({'error': 'No question provided'}), 400
         
         # Check if it's a task/reminder request
         intent = detect_intent(user_input)
@@ -89,7 +107,7 @@ def ask():
             add_chat_message(user_input, response, 'task', session_id)
             
             return jsonify({
-                'reply': response,
+                'response': response,
                 'tasks': tasks,
                 'type': 'task_action'
             })
@@ -102,7 +120,7 @@ def ask():
             add_chat_message(user_input, ai_response, 'ai_question', session_id)
             
             return jsonify({
-                'reply': ai_response,
+                'response': ai_response,
                 'type': 'ai_response'
             })
     
@@ -138,11 +156,6 @@ def analyze_image_route():
         # Analyze the image
         analysis_result = analyze_image(filepath, prompt)
         
-        # Save to chat history
-        session_id = session.get('session_id')
-        user_message = f"📷 Image Analysis: {prompt}"
-        add_chat_message(user_message, analysis_result, 'image', session_id)
-        
         # Clean up the uploaded file after analysis
         try:
             os.remove(filepath)
@@ -151,11 +164,11 @@ def analyze_image_route():
         
         # Save to chat history
         session_id = session.get('session_id')
-        user_message = f"[Image Upload] {prompt}" if prompt != 'Describe this image in detail.' else "[Image Upload] Image analysis request"
+        user_message = f"📷 {prompt}" if prompt != 'Describe this image in detail.' else "📷 Image analysis request"
         add_chat_message(user_message, analysis_result, 'image', session_id)
         
         return jsonify({
-            'reply': analysis_result,
+            'response': analysis_result,
             'type': 'image_analysis'
         })
     
@@ -250,5 +263,5 @@ def test_template():
 
 if __name__ == '__main__':
     print("🤖 Aditya AI starting...")
-    print("📱 Open http://localhost:8000 in your browser")
-    app.run(debug=True, host='0.0.0.0', port=8001)
+    print("📱 Open http://localhost:8003 in your browser")
+    app.run(debug=True, host='0.0.0.0', port=8003)

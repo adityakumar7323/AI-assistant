@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Background Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden;
+        }
+        
+        #galaxy {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(ellipse at center, #1e3c72 0%, #2a5298 25%, #000 70%);
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        .controls button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .controls button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div id="galaxy"></div>
+    
+    <div class="controls">
+        <h3>Galaxy Background Generator</h3>
+        <p>This creates an animated starfield background.</p>
+        <button onclick="regenerateStars()">Regenerate Stars</button>
+        <button onclick="downloadAsVideo()">Record Video</button>
+        <p><small>Use screen recording software to capture this as MP4 for your sidebar background.</small></p>
+    </div>
+
+    <script>
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // Random size (1px to 4px)
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            
+            // Random position
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            
+            // Random animation delay
+            star.style.animationDelay = Math.random() * 3 + 's';
+            
+            // Random animation duration
+            star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            
+            return star;
+        }
+        
+        function generateStars(count = 200) {
+            const galaxy = document.getElementById('galaxy');
+            
+            // Clear existing stars
+            galaxy.querySelectorAll('.star').forEach(star => star.remove());
+            
+            // Create new stars
+            for (let i = 0; i < count; i++) {
+                galaxy.appendChild(createStar());
+            }
+        }
+        
+        function regenerateStars() {
+            generateStars(300);
+        }
+        
+        function downloadAsVideo() {
+            alert('Use your computer\'s screen recording software (like QuickTime on Mac or OBS) to record this page as an MP4 video. Then save it as /static/videos/stars.mp4 in your project.');
+        }
+        
+        // Initialize
+        generateStars(250);
+        
+        // Add some floating particles
+        setInterval(() => {
+            if (Math.random() < 0.1) {
+                const particle = createStar();
+                particle.style.background = `hsl(${Math.random() * 60 + 200}, 70%, 80%)`; // Blue-ish colors
+                particle.style.animationDuration = '1s';
+                particle.style.opacity = '0.7';
+                document.getElementById('galaxy').appendChild(particle);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 1000);
+            }
+        }, 500);
+    </script>
+</body>
+</html>

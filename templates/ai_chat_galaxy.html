@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aditya AI - Galaxy Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Galaxy Background Styles */
+        .galaxy-starfield {
+            background: 
+                radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(173,216,230,0.6), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(221,160,221,0.7), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,182,193,0.5), transparent),
+                radial-gradient(2px 2px at 160px 30px, rgba(135,206,235,0.8), transparent),
+                radial-gradient(1px 1px at 200px 60px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 240px 90px, rgba(173,216,230,0.7), transparent),
+                radial-gradient(1px 1px at 280px 20px, rgba(221,160,221,0.5), transparent),
+                radial-gradient(1px 1px at 320px 50px, rgba(255,182,193,0.8), transparent),
+                radial-gradient(2px 2px at 360px 80px, rgba(135,206,235,0.6), transparent),
+                linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+            background-size: 400px 400px;
+            animation: galaxyMove 120s linear infinite;
+        }
+
+        @keyframes galaxyMove {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 25%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 75%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        /* Galaxy Sidebar Styles */
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { 
+            background-color: rgba(255, 255, 255, 0.2); 
+            border-radius: 3px; 
+        }
+
+        /* Galaxy Animations */
+        @keyframes galaxyPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.3; }
+            25% { opacity: 0.8; }
+            50% { opacity: 0.5; }
+            75% { opacity: 0.9; }
+        }
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .galaxy-pulse { animation: galaxyPulse 4s ease-in-out infinite; }
+        .star-twinkle { animation: starTwinkle 3s ease-in-out infinite; }
+        .border-glow { animation: borderGlow 2s ease-in-out infinite; }
+
+        /* Video and Fallback */
+        .video-background {
+            object-fit: cover;
+            filter: contrast(1.2) brightness(0.8) saturate(1.3);
+        }
+        .galaxy-fallback {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        /* Chat Styles */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 16px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #6b7280;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Voice Recording */
+        .voice-visualizer {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Twinkling star animations */
+        .star-twinkle-1 { animation: twinkle1 3s ease-in-out infinite; }
+        .star-twinkle-2 { animation: twinkle2 4s ease-in-out infinite; }
+        .star-twinkle-3 { animation: twinkle3 2.5s ease-in-out infinite; }
+
+        @keyframes twinkle1 {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            25% { opacity: 0.8; transform: scale(1.2); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+            75% { opacity: 0.9; transform: scale(1.3); }
+        }
+
+        @keyframes twinkle2 {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            33% { opacity: 0.9; transform: scale(1.1); }
+            66% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        @keyframes twinkle3 {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.4); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans overflow-hidden">
+    <div class="flex h-screen">
+        <!-- Galaxy Sidebar -->
+        <div id="galaxySidebar" class="relative w-72 h-screen overflow-hidden flex-shrink-0">
+            <!-- Video Background -->
+            <video id="galaxyVideo" 
+                   class="absolute inset-0 w-full h-full object-cover z-0 video-background"
+                   autoplay loop muted playsinline>
+                <source src="/static/videos/stars.mp4" type="video/mp4">
+                <div class="absolute inset-0 galaxy-fallback"></div>
+            </video>
+
+            <!-- Dark Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black/90 z-10"></div>
+
+            <!-- Sidebar Content -->
+            <div class="relative z-20 h-full flex flex-col p-4">
+                <!-- Header -->
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4 tracking-wide galaxy-pulse">
+                        Chat History
+                    </h2>
+                    
+                    <!-- New Chat Button -->
+                    <button id="newChatBtn" 
+                            class="w-full flex items-center justify-center gap-3 px-4 py-3 
+                                   bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-300
+                                   border border-white/20 hover:border-white/30 group">
+                        <svg class="w-5 h-5 text-white group-hover:rotate-90 transition-transform duration-300" 
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span class="text-white font-medium">New Chat</span>
+                    </button>
+                </div>
+
+                <!-- Chat History List -->
+                <div class="flex-1 overflow-y-auto scrollbar-thin">
+                    <div id="chatHistoryList" class="space-y-2">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-4 pt-4 border-t border-white/20">
+                    <div class="text-center star-twinkle">
+                        <p class="text-white/60 text-xs">Aditya AI Assistant</p>
+                        <p class="text-white/40 text-xs mt-1">Galaxy-Powered Intelligence</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Futuristic Border Glow -->
+            <div class="absolute inset-0 z-30 pointer-events-none border-glow">
+                <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-400/50 to-transparent"></div>
+                <div class="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-cyan-400/50 to-transparent"></div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="flex-1 flex flex-col bg-gray-900 relative">
+            <!-- Galaxy Background for Main Chat -->
+            <div class="absolute inset-0 galaxy-starfield"></div>
+            
+            <!-- Floating Twinkling Stars -->
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute top-[15%] left-[20%] w-2 h-2 bg-white rounded-full star-twinkle-1"></div>
+                <div class="absolute top-[25%] right-[15%] w-1.5 h-1.5 bg-blue-200 rounded-full star-twinkle-2"></div>
+                <div class="absolute bottom-[30%] left-[10%] w-3 h-3 bg-purple-200 rounded-full star-twinkle-3"></div>
+                <div class="absolute top-[45%] right-[25%] w-1 h-1 bg-pink-200 rounded-full star-twinkle-1"></div>
+                <div class="absolute bottom-[20%] right-[35%] w-2 h-2 bg-cyan-200 rounded-full star-twinkle-2"></div>
+                <div class="absolute top-[60%] left-[30%] w-1.5 h-1.5 bg-white rounded-full star-twinkle-3"></div>
+                <div class="absolute top-[35%] left-[60%] w-1 h-1 bg-blue-300 rounded-full star-twinkle-1"></div>
+                <div class="absolute bottom-[45%] right-[20%] w-2.5 h-2.5 bg-purple-300 rounded-full star-twinkle-2"></div>
+            </div>
+            
+            <div class="absolute inset-0 bg-black/50"></div>
+            
+            <!-- Chat Content (relative z-10) -->
+            <div class="relative z-10 flex flex-col h-full">
+            <!-- Header -->
+            <div class="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 p-4 flex items-center justify-between">
+                <h1 class="text-xl font-semibold text-white">Aditya AI Assistant</h1>
+                <button id="themeToggle" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
+                    🌙
+                </button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Welcome Message -->
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                        AI
+                    </div>
+                    <div class="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-100">
+                            🌌 Welcome to Aditya AI! I'm your galaxy-powered assistant. I can help you with:
+                        </p>
+                        <ul class="mt-3 space-y-2 text-gray-300 text-sm">
+                            <li>💬 Text conversations and questions</li>
+                            <li>🖼️ Image analysis and understanding</li>
+                            <li>🎤 Voice input and speech recognition</li>
+                            <li>🚀 Code assistance and explanations</li>
+                        </ul>
+                        <p class="mt-3 text-gray-400 text-sm">
+                            How can I assist you today?
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-6 bg-gray-800/30 backdrop-blur-sm border-t border-gray-700">
+                <div class="max-w-4xl mx-auto">
+                    <div class="relative">
+                        <textarea 
+                            id="messageInput"
+                            class="w-full min-h-[60px] max-h-32 p-4 pr-32 bg-gray-800 border border-gray-600 rounded-xl 
+                                   text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 
+                                   focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Message Aditya AI..."
+                            rows="1"
+                        ></textarea>
+                        
+                        <!-- Input Actions -->
+                        <div class="absolute right-2 bottom-2 flex items-center gap-2">
+                            <button id="imageBtn" 
+                                    class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                                    title="Upload Image">
+                                📷
+                            </button>
+                            <button id="voiceBtn" 
+                                    class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                                    title="Voice Input">
+                                🎤
+                            </button>
+                            <button id="sendBtn" 
+                                    class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
+                                    title="Send Message">
+                                ➤
+                            </button>
+                        </div>
+                        
+                        <input type="file" id="imageInput" class="hidden" accept="image/*">
+                    </div>
+                </div>
+            </div>
+            </div> <!-- Close the relative z-10 div -->
+        </div>
+    </div>
+
+    <!-- Voice Recording Modal -->
+    <div id="voiceModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-sm mx-4">
+            <h3 class="text-xl font-semibold text-white mb-6">Voice Recording</h3>
+            <div class="voice-visualizer w-20 h-20 bg-blue-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                🎤
+            </div>
+            <p id="voiceStatus" class="text-gray-300 mb-6">Listening...</p>
+            <button id="stopVoiceBtn" class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors">
+                Stop Recording
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Chat History Management
+        let chatHistory = [
+            { id: 1, title: "Welcome Chat", timestamp: "Just now", active: true },
+            { id: 2, title: "Image Analysis", timestamp: "5 hours ago", active: false },
+            { id: 3, title: "Code Review", timestamp: "1 day ago", active: false },
+        ];
+
+        let selectedImage = null;
+        let isRecording = false;
+        let recognition = null;
+
+        // Render chat history in sidebar
+        function renderChatHistory() {
+            const container = document.getElementById('chatHistoryList');
+            container.innerHTML = '';
+
+            chatHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = `group relative flex items-center gap-3 p-3 rounded-xl 
+                                        transition-all duration-300 cursor-pointer
+                                        ${item.active 
+                                            ? 'bg-white/20 border border-white/30' 
+                                            : 'bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20'
+                                        }`;
+                
+                historyItem.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <svg class="w-4 h-4 text-white/80 group-hover:text-white transition-colors" 
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-white font-medium text-sm truncate">${item.title}</p>
+                        <p class="text-white/60 text-xs mt-1">${item.timestamp}</p>
+                    </div>
+                    <button class="delete-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                                   p-1 hover:bg-red-500/20 rounded-md" data-id="${item.id}">
+                        <svg class="w-3 h-3 text-red-400 hover:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                `;
+
+                historyItem.addEventListener('click', (e) => {
+                    if (!e.target.closest('.delete-btn')) {
+                        selectChat(item.id);
+                    }
+                });
+
+                container.appendChild(historyItem);
+            });
+
+            // Add delete handlers
+            container.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteChat(parseInt(btn.dataset.id));
+                });
+            });
+        }
+
+        // Chat functions
+        function selectChat(id) {
+            chatHistory.forEach(item => item.active = item.id === id);
+            renderChatHistory();
+        }
+
+        function deleteChat(id) {
+            chatHistory = chatHistory.filter(item => item.id !== id);
+            if (!chatHistory.find(item => item.active) && chatHistory.length > 0) {
+                chatHistory[0].active = true;
+            }
+            renderChatHistory();
+        }
+
+        function newChat() {
+            const newId = Math.max(...chatHistory.map(item => item.id)) + 1;
+            chatHistory.forEach(item => item.active = false);
+            chatHistory.unshift({
+                id: newId,
+                title: `Conversation ${newId}`,
+                timestamp: "Just now",
+                active: true
+            });
+            renderChatHistory();
+            clearChat();
+        }
+
+        function clearChat() {
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = `
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                        AI
+                    </div>
+                    <div class="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-100">Hello! How can I help you today?</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Message functions
+        function addMessage(sender, content, isError = false) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start gap-4';
+            
+            const isUser = sender === 'user';
+            const avatarClass = isUser 
+                ? 'bg-gradient-to-r from-green-500 to-blue-600' 
+                : 'bg-gradient-to-r from-blue-500 to-purple-600';
+            const avatarText = isUser ? 'YOU' : 'AI';
+            
+            messageDiv.innerHTML = `
+                <div class="w-8 h-8 ${avatarClass} rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                    ${avatarText}
+                </div>
+                <div class="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border ${isError ? 'border-red-500' : 'border-gray-700'}">
+                    <p class="${isError ? 'text-red-300' : 'text-gray-100'}">${content}</p>
+                </div>
+            `;
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const container = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex items-start gap-4';
+            typingDiv.innerHTML = `
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                    AI
+                </div>
+                <div class="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
+                    <div class="typing-indicator">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message && !selectedImage) return;
+
+            if (message) addMessage('user', message);
+            if (selectedImage) {
+                addMessage('user', `📷 Image uploaded: ${selectedImage.name}`);
+            }
+
+            input.value = '';
+            input.style.height = 'auto';
+            showTypingIndicator();
+
+            try {
+                let response;
+                
+                if (selectedImage) {
+                    const formData = new FormData();
+                    formData.append('prompt', message || 'Analyze this image');
+                    formData.append('image', selectedImage);
+                    response = await fetch('/chat_with_image', { method: 'POST', body: formData });
+                } else {
+                    response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: message })
+                    });
+                }
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    addMessage('ai', `Error: ${data.error}`, true);
+                } else {
+                    addMessage('ai', data.response);
+                }
+            } catch (error) {
+                addMessage('ai', `Connection error: ${error.message}`, true);
+            } finally {
+                hideTypingIndicator();
+                selectedImage = null;
+                document.getElementById('imageBtn').classList.remove('text-blue-400');
+            }
+        }
+
+        // Voice recording functions
+        function startVoiceRecording() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition not supported');
+                return;
+            }
+
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                document.getElementById('voiceModal').classList.remove('hidden');
+                document.getElementById('voiceBtn').classList.add('text-blue-400');
+            };
+
+            recognition.onresult = (event) => {
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    }
+                }
+                
+                if (finalTranscript) {
+                    document.getElementById('messageInput').value = finalTranscript;
+                    stopVoiceRecording();
+                }
+            };
+
+            recognition.onerror = () => stopVoiceRecording();
+            recognition.start();
+        }
+
+        function stopVoiceRecording() {
+            if (recognition) {
+                recognition.stop();
+                recognition = null;
+            }
+            isRecording = false;
+            document.getElementById('voiceModal').classList.add('hidden');
+            document.getElementById('voiceBtn').classList.remove('text-blue-400');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderChatHistory();
+            
+            // Event listeners
+            document.getElementById('newChatBtn').addEventListener('click', newChat);
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('imageBtn').addEventListener('click', () => {
+                document.getElementById('imageInput').click();
+            });
+            document.getElementById('voiceBtn').addEventListener('click', startVoiceRecording);
+            document.getElementById('stopVoiceBtn').addEventListener('click', stopVoiceRecording);
+            
+            document.getElementById('imageInput').addEventListener('change', (e) => {
+                if (e.target.files[0]) {
+                    selectedImage = e.target.files[0];
+                    document.getElementById('imageBtn').classList.add('text-blue-400');
+                }
+            });
+
+            // Auto-resize textarea
+            const textarea = document.getElementById('messageInput');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+            });
+
+            // Enter to send
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Handle video fallback
+            const video = document.getElementById('galaxyVideo');
+            video.addEventListener('error', () => {
+                video.style.display = 'none';
+                document.getElementById('galaxySidebar').classList.add('galaxy-fallback');
+            });
+        });
+    </script>
+</body>
+</html>

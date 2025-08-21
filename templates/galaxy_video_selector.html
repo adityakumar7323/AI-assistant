@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Video Selector - Aditya AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .video-preview {
+            transition: all 0.3s ease;
+        }
+        .video-preview:hover {
+            transform: scale(1.05);
+        }
+        .selected {
+            ring-4 ring-purple-500;
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            🌌 Galaxy Video Selector
+        </h1>
+        
+        <p class="text-center text-gray-300 mb-12 max-w-2xl mx-auto">
+            Choose your preferred galaxy background for the AI chat interface. Each video offers a different visual experience.
+        </p>
+        
+        <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <!-- Enhanced Galaxy Video -->
+            <div class="bg-gray-900 rounded-xl p-6 video-preview" id="enhanced-card">
+                <h3 class="text-2xl font-bold mb-4 text-purple-400">🌟 Enhanced Galaxy</h3>
+                <div class="aspect-video bg-black rounded-lg mb-4 overflow-hidden">
+                    <video class="w-full h-full object-cover" autoplay loop muted>
+                        <source src="/static/videos/galaxy.mp4" type="video/mp4">
+                        <div class="flex items-center justify-center h-full">
+                            <span class="text-gray-500">Video not available</span>
+                        </div>
+                    </video>
+                </div>
+                <ul class="text-sm text-gray-300 mb-6 space-y-2">
+                    <li>✨ Enhanced nebula with swirl effects</li>
+                    <li>💫 Cosmic dust particles</li>
+                    <li>⭐ Diverse star types (normal, bright, distant, pulsar)</li>
+                    <li>🎨 Realistic color transitions</li>
+                    <li>📱 HD 1280x720 resolution</li>
+                    <li>⏱️ 25-second loop</li>
+                </ul>
+                <button onclick="selectVideo('enhanced')" id="enhanced-btn" 
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors selected">
+                    ✅ Currently Selected
+                </button>
+            </div>
+            
+            <!-- Simple Galaxy Video -->
+            <div class="bg-gray-900 rounded-xl p-6 video-preview" id="simple-card">
+                <h3 class="text-2xl font-bold mb-4 text-blue-400">⭐ Simple Galaxy</h3>
+                <div class="aspect-video bg-black rounded-lg mb-4 overflow-hidden">
+                    <video class="w-full h-full object-cover" autoplay loop muted>
+                        <source src="/static/videos/galaxy_simple.mp4" type="video/mp4">
+                        <div class="flex items-center justify-center h-full">
+                            <span class="text-gray-500">Video not available</span>
+                        </div>
+                    </video>
+                </div>
+                <ul class="text-sm text-gray-300 mb-6 space-y-2">
+                    <li>🌟 Clean animated stars</li>
+                    <li>🌀 Nebula clouds</li>
+                    <li>💡 Twinkling effects</li>
+                    <li>🔋 Better performance</li>
+                    <li>📱 HD 1280x720 resolution</li>
+                    <li>⏱️ 20-second loop</li>
+                </ul>
+                <button onclick="selectVideo('simple')" id="simple-btn"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                    Select This Video
+                </button>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12">
+            <div class="bg-gray-900 rounded-xl p-6 max-w-md mx-auto">
+                <h4 class="text-xl font-bold mb-4 text-green-400">🚀 Quick Actions</h4>
+                <div class="space-y-3">
+                    <a href="/" class="block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                        🎯 Go to AI Chat Interface
+                    </a>
+                    <a href="/galaxy" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                        🌌 Galaxy Version
+                    </a>
+                    <a href="/classic" class="block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                        📱 Classic Version
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentSelection = 'enhanced';
+        
+        function selectVideo(type) {
+            if (currentSelection === type) return;
+            
+            // Update selection
+            currentSelection = type;
+            
+            // Update UI
+            updateUI();
+            
+            // Copy the selected video to be the main galaxy.mp4
+            copyVideo(type);
+        }
+        
+        function updateUI() {
+            // Reset all cards
+            document.getElementById('enhanced-card').classList.remove('selected');
+            document.getElementById('simple-card').classList.remove('selected');
+            
+            // Reset all buttons
+            document.getElementById('enhanced-btn').className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors';
+            document.getElementById('simple-btn').className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors';
+            
+            // Update selected
+            if (currentSelection === 'enhanced') {
+                document.getElementById('enhanced-card').classList.add('selected');
+                document.getElementById('enhanced-btn').className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors selected';
+                document.getElementById('enhanced-btn').innerHTML = '✅ Currently Selected';
+                document.getElementById('simple-btn').innerHTML = 'Select This Video';
+            } else {
+                document.getElementById('simple-card').classList.add('selected');
+                document.getElementById('simple-btn').className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors selected';
+                document.getElementById('simple-btn').innerHTML = '✅ Currently Selected';
+                document.getElementById('enhanced-btn').innerHTML = 'Select This Video';
+            }
+        }
+        
+        async function copyVideo(type) {
+            try {
+                const response = await fetch('/api/select-galaxy-video', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ type: type })
+                });
+                
+                if (response.ok) {
+                    showNotification(`✅ ${type} galaxy video selected!`, 'success');
+                } else {
+                    showNotification('❌ Failed to update video', 'error');
+                }
+            } catch (error) {
+                console.error('Error selecting video:', error);
+                showNotification('❌ Error updating video', 'error');
+            }
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white font-bold z-50 ${
+                type === 'success' ? 'bg-green-600' : 'bg-red-600'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Initialize UI
+        updateUI();
+    </script>
+</body>
+</html>
