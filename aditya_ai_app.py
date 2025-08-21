@@ -1,28 +1,16 @@
 from flask import Flask, render_template, request, jsonify, session
-import google.generativeai as genai
-from PIL import Image
 import os
 from werkzeug.utils import secure_filename
 import io
 import base64
 from dotenv import load_dotenv
+from nlp import ask_ai_question, analyze_image
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'aditya-ai-secret-key-2024'
-
-# Configure Gemini AI
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in environment variables")
-
-genai.configure(api_key=GEMINI_API_KEY)
-
-# Initialize models
-text_model = genai.GenerativeModel('gemini-1.5-flash')
-vision_model = genai.GenerativeModel('gemini-1.5-flash')
 
 # Configure upload settings
 UPLOAD_FOLDER = 'uploads'
@@ -89,7 +77,7 @@ def select_galaxy_video():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    """Handle text-based AI conversations"""
+    """Handle text-based AI conversations using enhanced nlp module"""
     try:
         data = request.get_json()
         user_message = data.get('message', '').strip()
@@ -101,9 +89,8 @@ def chat():
         if 'chat_history' not in session:
             session['chat_history'] = []
         
-        # Generate AI response
-        response = text_model.generate_content(user_message)
-        ai_response = response.text
+        # Generate AI response using enhanced nlp module (supports OpenAI + Gemini)
+        ai_response = ask_ai_question(user_message)
         
         # Store in chat history
         session['chat_history'].append({
@@ -125,7 +112,7 @@ def chat():
 
 @app.route('/chat_with_image', methods=['POST'])
 def chat_with_image():
-    """Handle AI conversations with image analysis"""
+    """Handle AI conversations with image analysis using enhanced nlp module"""
     try:
         # Get text prompt
         prompt = request.form.get('prompt', 'Analyze this image')
@@ -141,19 +128,18 @@ def chat_with_image():
         if not allowed_file(file.filename):
             return jsonify({'error': 'Invalid file type. Please upload an image.'}), 400
         
-        # Process image with PIL
+        # Save image first
         try:
-            image = Image.open(io.BytesIO(file.read()))
-            
-            # Generate AI response with image
-            response = vision_model.generate_content([prompt, image])
-            ai_response = response.text
-            
-            # Save image for reference
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.seek(0)
             file.save(filepath)
+            
+            # Get image info for response
+            from PIL import Image
+            image = Image.open(filepath)
+            
+            # Generate AI response using enhanced nlp module (supports OpenAI + Gemini)
+            ai_response = analyze_image(filepath, prompt)
             
             return jsonify({
                 'response': ai_response,
@@ -187,4 +173,5 @@ if __name__ == '__main__':
     print("🤖 Aditya AI - Galaxy ChatGPT Interface")
     print("🌐 Open http://localhost:3001")
     print("✨ Features: Chat, Voice Input, Image Analysis, Galaxy Sidebar")
+    print("🧠 Powered by: DeepSeek AI (Primary) + OpenAI + Gemini (Multi-tier Fallback)")
     app.run(debug=True, host='0.0.0.0', port=3001)

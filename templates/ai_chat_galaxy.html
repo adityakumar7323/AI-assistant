@@ -111,6 +111,135 @@
             100% { transform: scale(1); }
         }
 
+        /* Text-to-Speech Controls */
+        .tts-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .tts-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .tts-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .tts-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .tts-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Audio Visualizer */
+        .audio-visualizer {
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 5px;
+            display: none;
+            opacity: 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .audio-visualizer.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            animation: visualizerFadeIn 0.3s ease-out forwards;
+        }
+        
+        .visualizer-bar {
+            width: 4px;
+            background: linear-gradient(to top, #3b82f6, #06b6d4, #10b981);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+            min-height: 4px;
+        }
+        
+        .visualizer-bar.voice-active {
+            animation: voiceVisualize 0.5s ease-in-out infinite alternate;
+        }
+        
+        .visualizer-bar.tts-active {
+            animation: ttsVisualize 0.3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes visualizerFadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        @keyframes voiceVisualize {
+            0% { height: 8px; }
+            50% { height: 25px; }
+            100% { height: 12px; }
+        }
+        
+        @keyframes ttsVisualize {
+            0% { height: 6px; }
+            50% { height: 20px; }
+            100% { height: 10px; }
+        }
+        
+        .visualizer-label {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 10px;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        .tts-indicator {
+            font-size: 12px;
+            color: #6b7280;
+            animation: tts-pulse 1.5s infinite;
+        }
+        
+        @keyframes tts-pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         /* Twinkling star animations */
         .star-twinkle-1 { animation: twinkle1 3s ease-in-out infinite; }
         .star-twinkle-2 { animation: twinkle2 4s ease-in-out infinite; }
@@ -218,10 +347,30 @@
             <div class="relative z-10 flex flex-col h-full">
             <!-- Header -->
             <div class="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 p-4 flex items-center justify-between">
-                <h1 class="text-xl font-semibold text-white">Aditya AI Assistant</h1>
-                <button id="themeToggle" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
-                    🌙
-                </button>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-xl font-semibold text-white">Aditya AI Assistant</h1>
+                    <div id="apiStatus" class="flex items-center gap-2 text-sm">
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <span class="text-yellow-400">Built-in Knowledge Mode</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="debugTTS" class="p-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition-colors text-white text-sm" title="Debug TTS" onclick="debugTTS()">
+                        🔍 Debug
+                    </button>
+                    <button id="directTest" class="p-2 rounded-lg bg-red-600 hover:bg-red-500 transition-colors text-white text-sm" title="Direct Speech Test" onclick="directSpeechTest()">
+                        ⚡ Direct
+                    </button>
+                    <button id="testTTS" class="p-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors text-white text-sm" title="Test Text-to-Speech">
+                        🔊 Test
+                    </button>
+                    <button id="ttsToggle" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors text-white" title="Toggle Text-to-Speech">
+                        🔊
+                    </button>
+                    <button id="themeToggle" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
+                        🌙
+                    </button>
+                </div>
             </div>
 
             <!-- Chat Messages -->
@@ -233,16 +382,25 @@
                     </div>
                     <div class="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
                         <p class="text-gray-100">
-                            🌌 Welcome to Aditya AI! I'm your galaxy-powered assistant. I can help you with:
+                            🌌 Welcome to Aditya AI! I'm your galaxy-powered assistant running in built-in knowledge mode.
                         </p>
                         <ul class="mt-3 space-y-2 text-gray-300 text-sm">
-                            <li>💬 Text conversations and questions</li>
-                            <li>🖼️ Image analysis and understanding</li>
+                            <li>💬 Text conversations with comprehensive built-in knowledge</li>
+                            <li>🖼️ Image upload support (enhanced analysis when APIs available)</li>
                             <li>🎤 Voice input and speech recognition</li>
-                            <li>🚀 Code assistance and explanations</li>
+                            <li>🔊 Text-to-speech for AI responses (ENABLED BY DEFAULT)</li>
+                            <li>🧠 Detailed explanations on technology, science, health & more</li>
                         </ul>
+                        <div class="mt-4 p-3 bg-blue-900/30 border border-blue-500/30 rounded-lg">
+                            <p class="text-blue-300 text-sm font-semibold">
+                                💡 Built-in Knowledge Mode Active
+                            </p>
+                            <p class="text-blue-200 text-xs mt-1">
+                                I have extensive knowledge on programming, AI, science, health, productivity and more! I can provide detailed explanations and help with tasks even without external APIs.
+                            </p>
+                        </div>
                         <p class="mt-3 text-gray-400 text-sm">
-                            How can I assist you today?
+                            ✨ I will automatically speak my responses! Use the 🔊 button to toggle speech on/off.
                         </p>
                     </div>
                 </div>
@@ -268,11 +426,25 @@
                                     title="Upload Image">
                                 📷
                             </button>
-                            <button id="voiceBtn" 
-                                    class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
-                                    title="Voice Input">
-                                🎤
-                            </button>
+                            <div class="relative">
+                                <!-- Audio Visualizer (Above Voice Button) -->
+                                <div id="audioVisualizer" class="audio-visualizer">
+                                    <div class="visualizer-label" id="visualizerLabel">Recording</div>
+                                    <div class="visualizer-bar" style="animation-delay: 0s;"></div>
+                                    <div class="visualizer-bar" style="animation-delay: 0.1s;"></div>
+                                    <div class="visualizer-bar" style="animation-delay: 0.2s;"></div>
+                                    <div class="visualizer-bar" style="animation-delay: 0.3s;"></div>
+                                    <div class="visualizer-bar" style="animation-delay: 0.4s;"></div>
+                                    <div class="visualizer-bar" style="animation-delay: 0.5s;"></div>
+                                    <div class="visualizer-bar" style="animation-delay: 0.6s;"></div>
+                                    <div class="visualizer-bar" style="animation-delay: 0.7s;"></div>
+                                </div>
+                                <button id="voiceBtn" 
+                                        class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                                        title="Voice Input">
+                                    🎤
+                                </button>
+                            </div>
                             <button id="sendBtn" 
                                     class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
                                     title="Send Message">
@@ -313,6 +485,11 @@
         let selectedImage = null;
         let isRecording = false;
         let recognition = null;
+        
+        // Text-to-Speech variables
+        let ttsEnabled = true; // Always enabled for testing
+        let currentUtterance = null;
+        let isInitialized = false;
 
         // Render chat history in sidebar
         function renderChatHistory() {
@@ -403,6 +580,7 @@
                     </div>
                     <div class="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
                         <p class="text-gray-100">Hello! How can I help you today?</p>
+                        <p class="text-gray-400 text-sm mt-2">💡 Tip: I can speak my responses aloud! Toggle the 🔊 button in the header.</p>
                     </div>
                 </div>
             `;
@@ -415,10 +593,16 @@
             messageDiv.className = 'flex items-start gap-4';
             
             const isUser = sender === 'user';
+            const isAI = sender === 'ai' || sender === 'AI';
             const avatarClass = isUser 
                 ? 'bg-gradient-to-r from-green-500 to-blue-600' 
                 : 'bg-gradient-to-r from-blue-500 to-purple-600';
             const avatarText = isUser ? 'YOU' : 'AI';
+            
+            console.log('addMessage called:', { sender, isAI, isError, ttsEnabled });
+            
+            // Create unique ID for TTS controls
+            const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
             
             messageDiv.innerHTML = `
                 <div class="w-8 h-8 ${avatarClass} rounded-lg flex items-center justify-center text-white font-bold text-xs">
@@ -426,11 +610,48 @@
                 </div>
                 <div class="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border ${isError ? 'border-red-500' : 'border-gray-700'}">
                     <p class="${isError ? 'text-red-300' : 'text-gray-100'}">${content}</p>
+                    ${isAI && !isError ? `
+                        <div class="tts-controls mt-2">
+                            <button class="tts-btn" onclick="speakMessage('${messageId}')">
+                                🔊 Play
+                            </button>
+                            <button class="tts-btn" onclick="stopSpeech()">
+                                ⏹️ Stop
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
             `;
             
+            // Store the content for TTS
+            if (isAI && !isError) {
+                messageDiv.setAttribute('data-message-content', content);
+                messageDiv.setAttribute('data-message-id', messageId);
+            }
+            
             container.appendChild(messageDiv);
             container.scrollTop = container.scrollHeight;
+            
+            // Auto-speak AI responses if TTS is enabled
+            if (isAI && !isError) {
+                console.log('🤖 AI message detected, attempting auto-speech');
+                console.log('- Content length:', content.length);
+                console.log('- TTS enabled:', ttsEnabled);
+                console.log('- Is initialized:', isInitialized);
+                
+                // Ensure TTS is enabled for auto-speech
+                if (!ttsEnabled) {
+                    console.log('📢 TTS was disabled, enabling for auto-speech...');
+                    ttsEnabled = true;
+                    updateTTSToggle();
+                }
+                
+                // Auto-speak immediately for better user experience
+                console.log('🔊 Starting auto-speech for AI response...');
+                speakText(content);
+            } else {
+                console.log('❌ Not auto-speaking:', { isAI, isError, sender });
+            }
         }
 
         function showTypingIndicator() {
@@ -522,6 +743,8 @@
                 isRecording = true;
                 document.getElementById('voiceModal').classList.remove('hidden');
                 document.getElementById('voiceBtn').classList.add('text-blue-400');
+                // Show audio visualizer for voice recording
+                showAudioVisualizer('voice', 'Recording...');
             };
 
             recognition.onresult = (event) => {
@@ -550,15 +773,477 @@
             isRecording = false;
             document.getElementById('voiceModal').classList.add('hidden');
             document.getElementById('voiceBtn').classList.remove('text-blue-400');
+            // Hide audio visualizer
+            hideAudioVisualizer();
+        }
+
+        // Audio Visualizer Functions
+        function showAudioVisualizer(type, label) {
+            const visualizer = document.getElementById('audioVisualizer');
+            const labelElement = document.getElementById('visualizerLabel');
+            
+            // Set label text
+            labelElement.textContent = label;
+            
+            // Show visualizer
+            visualizer.style.display = 'flex';
+            visualizer.classList.add('active');
+            
+            // Add appropriate animation class
+            const bars = visualizer.querySelectorAll('.visualizer-bar');
+            bars.forEach(bar => {
+                bar.classList.remove('voice-active', 'tts-active');
+                if (type === 'voice') {
+                    bar.classList.add('voice-active');
+                } else if (type === 'tts') {
+                    bar.classList.add('tts-active');
+                }
+            });
+            
+            console.log(`🎵 Audio visualizer shown for ${type}: ${label}`);
+        }
+
+        function hideAudioVisualizer() {
+            const visualizer = document.getElementById('audioVisualizer');
+            const bars = visualizer.querySelectorAll('.visualizer-bar');
+            
+            // Remove animation classes
+            bars.forEach(bar => {
+                bar.classList.remove('voice-active', 'tts-active');
+            });
+            
+            // Remove active class and hide
+            visualizer.classList.remove('active');
+            setTimeout(() => {
+                visualizer.style.display = 'none';
+            }, 300);
+            
+            console.log('🎵 Audio visualizer hidden');
+        }
+
+        function updateVisualizerLabel(text) {
+            const labelElement = document.getElementById('visualizerLabel');
+            if (labelElement) {
+                labelElement.textContent = text;
+            }
+        }
+
+        // Text-to-Speech Functions
+        function initializeTTS() {
+            console.log('🔧 Initializing TTS...');
+            
+            if (!('speechSynthesis' in window)) {
+                console.warn('❌ Speech Synthesis not supported');
+                document.getElementById('ttsToggle').style.display = 'none';
+                document.getElementById('testTTS').style.display = 'none';
+                return;
+            }
+            
+            console.log('✅ Speech Synthesis supported');
+            isInitialized = true;
+            
+            // Always enable TTS by default for auto-speech
+            ttsEnabled = true;
+            
+            // Load user preference if available
+            const savedTTSEnabled = localStorage.getItem('tts-enabled');
+            if (savedTTSEnabled !== null) {
+                ttsEnabled = savedTTSEnabled === 'true';
+            }
+            
+            // Ensure TTS is enabled for auto-speech functionality
+            if (!ttsEnabled) {
+                console.log('🔧 Enabling TTS for auto-speech functionality...');
+                ttsEnabled = true;
+                localStorage.setItem('tts-enabled', 'true');
+            }
+            
+            updateTTSToggle();
+            console.log('🎉 TTS initialized successfully - Auto-speech enabled');
+            
+            // Show user that TTS is ready
+            setTimeout(() => {
+                showNotification('🔊 Text-to-Speech enabled - AI will speak responses');
+            }, 1000);
+        }
+        
+        function updateTTSToggle() {
+            const ttsToggle = document.getElementById('ttsToggle');
+            if (ttsEnabled) {
+                ttsToggle.textContent = '🔊';
+                ttsToggle.title = 'Text-to-Speech: ON (Click to disable)';
+                ttsToggle.classList.remove('opacity-50');
+            } else {
+                ttsToggle.textContent = '🔇';
+                ttsToggle.title = 'Text-to-Speech: OFF (Click to enable)';
+                ttsToggle.classList.add('opacity-50');
+            }
+        }
+        
+        function toggleTTS() {
+            ttsEnabled = !ttsEnabled;
+            localStorage.setItem('tts-enabled', ttsEnabled.toString());
+            updateTTSToggle();
+            
+            // Stop current speech if disabling
+            if (!ttsEnabled && currentUtterance) {
+                window.speechSynthesis.cancel();
+                currentUtterance = null;
+                // Hide audio visualizer when disabling TTS
+                hideAudioVisualizer();
+            }
+            
+            // Show feedback
+            const feedback = ttsEnabled ? 'Text-to-Speech enabled' : 'Text-to-Speech disabled';
+            showNotification(feedback);
+            console.log('TTS toggled:', ttsEnabled);
+        }
+        
+        function speakText(text) {
+            console.log('=== TTS SPEAK REQUEST ===');
+            console.log('speakText called with text:', text?.substring(0, 100) + '...');
+            console.log('ttsEnabled:', ttsEnabled);
+            console.log('isInitialized:', isInitialized);
+            console.log('speechSynthesis available:', 'speechSynthesis' in window);
+            
+            // Force enable TTS for auto-speech
+            if (!ttsEnabled) {
+                console.log('🔧 Force enabling TTS for auto-speech...');
+                ttsEnabled = true;
+                updateTTSToggle();
+            }
+            
+            // Simple check - if no text, return
+            if (!text || text.trim() === '') {
+                console.log('❌ No text to speak');
+                return;
+            }
+            
+            // Check browser support
+            if (!('speechSynthesis' in window)) {
+                console.error('❌ Speech Synthesis not supported');
+                showNotification('Speech not supported in this browser');
+                return;
+            }
+            
+            try {
+                // Cancel any existing speech
+                window.speechSynthesis.cancel();
+                console.log('🔄 Cancelled any existing speech');
+                
+                // Clean the text
+                const cleanText = text
+                    .replace(/[🌌🚀💬🖼️🎤📷🔊🎵📊]/g, '') // Remove emojis
+                    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
+                    .replace(/\*(.*?)\*/g, '$1') // Remove italic markdown
+                    .replace(/`(.*?)`/g, '$1') // Remove code blocks
+                    .replace(/#{1,6}\s/g, '') // Remove headers
+                    .replace(/\n/g, ' ') // Replace newlines with spaces
+                    .replace(/\s+/g, ' ') // Multiple spaces to single
+                    .trim();
+                
+                console.log('🧹 Clean text to speak:', cleanText?.substring(0, 100) + '...');
+                
+                if (!cleanText) {
+                    console.log('❌ No clean text after processing');
+                    return;
+                }
+                
+                // Create utterance
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                console.log('📝 Created utterance');
+                
+                // Optimal settings for clarity
+                utterance.rate = 0.9; // Slightly faster for better experience
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                utterance.lang = 'en-US';
+                
+                // Event handlers
+                utterance.onstart = function() {
+                    console.log('✅ Speech STARTED');
+                    currentUtterance = utterance;
+                    updateSpeakingIndicator(true);
+                    // Show audio visualizer for TTS
+                    showAudioVisualizer('tts', 'Speaking...');
+                    showNotification('🔊 Speaking response...');
+                };
+                
+                utterance.onend = function() {
+                    console.log('✅ Speech ENDED');
+                    currentUtterance = null;
+                    updateSpeakingIndicator(false);
+                    // Hide audio visualizer
+                    hideAudioVisualizer();
+                };
+                
+                utterance.onerror = function(event) {
+                    console.error('❌ Speech ERROR:', event.error, event);
+                    currentUtterance = null;
+                    updateSpeakingIndicator(false);
+                    // Hide audio visualizer on error
+                    hideAudioVisualizer();
+                    showNotification('Speech error: ' + event.error);
+                };
+                
+                // Speak immediately
+                console.log('🔊 STARTING SPEECH NOW...');
+                window.speechSynthesis.speak(utterance);
+                
+                // Verification check
+                setTimeout(() => {
+                    console.log('📊 Speech status check after 200ms:');
+                    console.log('- speaking:', window.speechSynthesis.speaking);
+                    console.log('- pending:', window.speechSynthesis.pending);
+                    console.log('- paused:', window.speechSynthesis.paused);
+                    
+                    if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+                        console.warn('⚠️ Speech may have failed to start - trying direct approach');
+                        // Fallback: try again with a short delay
+                        setTimeout(() => {
+                            if (!window.speechSynthesis.speaking) {
+                                window.speechSynthesis.speak(utterance);
+                                console.log('🔄 Retry speech attempt');
+                            }
+                        }, 100);
+                    }
+                }, 200);
+                
+            } catch (error) {
+                console.error('❌ TTS Exception:', error);
+                showNotification('Speech error: ' + error.message);
+                hideAudioVisualizer();
+            }
+        }
+        
+        function cleanTextForSpeech(text) {
+            return text
+                // Remove markdown formatting
+                .replace(/\*\*(.*?)\*\*/g, '$1')
+                .replace(/\*(.*?)\*/g, '$1')
+                .replace(/`(.*?)`/g, '$1')
+                .replace(/#{1,6}\s/g, '')
+                // Remove emojis
+                .replace(/[🌌🚀💬🖼️🎤📷🔊🎵📊]/g, '')
+                // Clean up extra whitespace
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+        
+        function showNotification(message) {
+            console.log('Notification:', message);
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg z-50';
+            notification.textContent = message;
+            notification.style.transform = 'translateX(100%)';
+            notification.style.transition = 'transform 0.3s ease';
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Animate out and remove
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        function stopSpeech() {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                currentUtterance = null;
+                updateSpeakingIndicator(false);
+                // Hide audio visualizer when stopping speech
+                hideAudioVisualizer();
+                showNotification('Speech stopped');
+                console.log('Speech manually stopped');
+            }
+        }
+        
+        function speakMessage(messageId) {
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (messageElement) {
+                const content = messageElement.getAttribute('data-message-content');
+                if (content) {
+                    // Force enable for manual play
+                    const wasEnabled = ttsEnabled;
+                    ttsEnabled = true;
+                    speakText(content);
+                    ttsEnabled = wasEnabled;
+                }
+            }
+        }
+        
+        function updateSpeakingIndicator(speaking) {
+            const ttsToggle = document.getElementById('ttsToggle');
+            if (speaking) {
+                ttsToggle.style.animation = 'pulse 1s infinite';
+                ttsToggle.style.color = '#3b82f6';
+            } else {
+                ttsToggle.style.animation = '';
+                ttsToggle.style.color = '';
+            }
+        }
+        
+        function testTTS() {
+            console.log('🧪 TESTING TTS...');
+            
+            if (!('speechSynthesis' in window)) {
+                alert('❌ Speech Synthesis not supported in this browser');
+                return;
+            }
+            
+            console.log('Browser supports speechSynthesis');
+            
+            // Force enable
+            isInitialized = true;
+            ttsEnabled = true;
+            
+            // Test with simple message
+            const testMessage = 'Hello! This is a test of the text to speech system.';
+            console.log('Testing with message:', testMessage);
+            
+            speakText(testMessage);
+            
+            // Show feedback
+            showNotification('Testing speech... Check console for details');
+        }
+        
+        // Direct speech test that bypasses all our custom logic
+        function directSpeechTest() {
+            console.log('⚡ DIRECT SPEECH TEST - bypassing all custom logic');
+            
+            if (!('speechSynthesis' in window)) {
+                alert('❌ Speech Synthesis not supported');
+                return;
+            }
+            
+            try {
+                // Cancel any existing
+                window.speechSynthesis.cancel();
+                
+                // Create utterance directly
+                const utterance = new SpeechSynthesisUtterance('Direct speech test. This should work immediately.');
+                
+                utterance.onstart = () => console.log('✅ DIRECT SPEECH STARTED');
+                utterance.onend = () => console.log('✅ DIRECT SPEECH ENDED');
+                utterance.onerror = (e) => console.error('❌ DIRECT SPEECH ERROR:', e);
+                
+                // Speak immediately
+                window.speechSynthesis.speak(utterance);
+                console.log('Direct speech command sent');
+                
+            } catch (error) {
+                console.error('Direct speech error:', error);
+                alert('Direct speech error: ' + error.message);
+            }
+        }
+
+        // Enhanced TTS Debugging Function
+        function debugTTS() {
+            console.log('=== COMPREHENSIVE TTS DEBUG ===');
+            
+            // Browser support check
+            console.log('Browser Support:');
+            console.log('- speechSynthesis in window:', 'speechSynthesis' in window);
+            console.log('- SpeechSynthesisUtterance available:', typeof SpeechSynthesisUtterance !== 'undefined');
+            
+            if ('speechSynthesis' in window) {
+                console.log('- speechSynthesis object:', window.speechSynthesis);
+                console.log('- speaking:', window.speechSynthesis.speaking);
+                console.log('- pending:', window.speechSynthesis.pending);
+                console.log('- paused:', window.speechSynthesis.paused);
+                
+                // Get voices
+                const voices = window.speechSynthesis.getVoices();
+                console.log('- Available voices:', voices.length);
+                if (voices.length > 0) {
+                    console.log('- First 3 voices:', voices.slice(0, 3).map(v => ({
+                        name: v.name,
+                        lang: v.lang,
+                        default: v.default
+                    })));
+                }
+            }
+            
+            // App state
+            console.log('\nApp State:');
+            console.log('- ttsEnabled:', ttsEnabled);
+            console.log('- isInitialized:', isInitialized);
+            console.log('- currentUtterance:', currentUtterance);
+            
+            // Browser info
+            console.log('\nBrowser Info:');
+            console.log('- User Agent:', navigator.userAgent);
+            console.log('- Platform:', navigator.platform);
+            console.log('- Language:', navigator.language);
+            
+            return {
+                supported: 'speechSynthesis' in window,
+                enabled: ttsEnabled,
+                initialized: isInitialized,
+                voiceCount: 'speechSynthesis' in window ? window.speechSynthesis.getVoices().length : 0
+            };
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM loaded, initializing app...');
+            
             renderChatHistory();
+            
+            // Initialize TTS with voice loading
+            if ('speechSynthesis' in window) {
+                // Wait for voices to load (important for some browsers)
+                function initTTSWhenReady() {
+                    const voices = window.speechSynthesis.getVoices();
+                    if (voices.length > 0) {
+                        initializeTTS();
+                        console.log('🎤 Available voices:', voices.length);
+                    } else {
+                        // Voices not loaded yet, wait a bit more
+                        setTimeout(initTTSWhenReady, 100);
+                    }
+                }
+                
+                // Some browsers fire voiceschanged event
+                window.speechSynthesis.addEventListener('voiceschanged', function() {
+                    if (!isInitialized) {
+                        initializeTTS();
+                    }
+                });
+                
+                // Start initialization
+                initTTSWhenReady();
+            } else {
+                console.warn('⚠️ Speech synthesis not supported in this browser');
+            }
+            
+            // Initialize audio visualizer (start hidden)
+            const audioVisualizer = document.getElementById('audioVisualizer');
+            if (audioVisualizer) {
+                audioVisualizer.style.display = 'none';
+                audioVisualizer.classList.remove('active');
+                console.log('🎵 Audio visualizer initialized and hidden');
+            }
+            
+            console.log('🔊 TTS Status after init:', { ttsEnabled, isInitialized });
             
             // Event listeners
             document.getElementById('newChatBtn').addEventListener('click', newChat);
             document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('testTTS').addEventListener('click', testTTS);
+            document.getElementById('ttsToggle').addEventListener('click', toggleTTS);
             document.getElementById('imageBtn').addEventListener('click', () => {
                 document.getElementById('imageInput').click();
             });
