@@ -28,6 +28,18 @@ def init_db():
             )
         ''')
         
+        # Create chat history table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS chat_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_message TEXT NOT NULL,
+                ai_response TEXT NOT NULL,
+                message_type TEXT DEFAULT 'text',
+                created_at TEXT NOT NULL,
+                session_id TEXT
+            )
+        ''')
+        
         conn.commit()
         cursor.close()
         conn.close()
@@ -157,3 +169,113 @@ def mark_task_completed(task_id):
     except sqlite3.Error as e:
         print(f"❌ Error marking task completed: {e}")
         return False
+
+def add_chat_message(user_message, ai_response, message_type='text', session_id=None):
+    """Add a chat message and response to history"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        created_at = datetime.now().isoformat()
+        
+        cursor.execute('''
+            INSERT INTO chat_history (user_message, ai_response, message_type, created_at, session_id)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (user_message, ai_response, message_type, created_at, session_id))
+        
+        message_id = cursor.lastrowid
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return message_id
+    except sqlite3.Error as e:
+        print(f"❌ Error adding chat message: {e}")
+        return None
+
+def get_chat_history(limit=50, session_id=None):
+    """Get chat history from database"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        if session_id:
+            cursor.execute('''
+                SELECT * FROM chat_history 
+                WHERE session_id = ? 
+                ORDER BY created_at DESC 
+                LIMIT ?
+            ''', (session_id, limit))
+        else:
+            cursor.execute('''
+                SELECT * FROM chat_history 
+                ORDER BY created_at DESC 
+                LIMIT ?
+            ''', (limit,))
+        
+        messages = []
+        for row in cursor.fetchall():
+            messages.append({
+                'id': row['id'],
+                'user_message': row['user_message'],
+                'ai_response': row['ai_response'],
+                'message_type': row['message_type'],
+                'created_at': row['created_at'],
+                'session_id': row['session_id']
+            })
+        
+        cursor.close()
+        conn.close()
+        
+        # Return in chronological order (oldest first)
+        return list(reversed(messages))
+    except sqlite3.Error as e:
+        print(f"❌ Error getting chat history: {e}")
+        return []
+
+def clear_chat_history(session_id=None):
+    """Clear chat history"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        if session_id:
+            cursor.execute('DELETE FROM chat_history WHERE session_id = ?', (session_id,))
+        else:
+            cursor.execute('DELETE FROM chat_history')
+        
+        affected_rows = cursor.rowcount
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        print(f"✅ Cleared {affected_rows} chat messages")
+        return True
+    except sqlite3.Error as e:
+        print(f"❌ Error clearing chat history: {e}")
+        return False
+
+def get_chat_stats():
+    """Get chat history statistics"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT COUNT(*) as total_messages FROM chat_history')
+        total = cursor.fetchone()['total_messages']
+        
+        cursor.execute('''
+            SELECT COUNT(*) as recent_messages 
+            FROM chat_history 
+            WHERE created_at >= datetime('now', '-7 days')
+        ''')
+        recent = cursor.fetchone()['recent_messages']
+        
+        cursor.close()
+        conn.close()
+        
+        return {
+            'total_messages': total,
+            'recent_messages': recent
+        }
+    except sqlite3.Error as e:
+        print(f"❌ Error getting chat stats: {e}")
+        return {'total_messages': 0, 'recent_messages': 0}

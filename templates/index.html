@@ -3,8 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 Aditya AI</title>
+    <title>Aditya AI</title>
     <style>
+        :root {
+            /* Light theme colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --border-primary: #e5e7eb;
+            --border-secondary: #d1d5db;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #2563eb;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a3e;
+            --bg-tertiary: #2d2d5f;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --text-tertiary: #8e8ea0;
+            --border-primary: #2d2d5f;
+            --border-secondary: #3a3a5c;
+            --accent-primary: #10a37f;
+            --accent-secondary: #0d8f6d;
+            --shadow-light: rgba(0, 0, 0, 0.3);
+            --shadow-medium: rgba(0, 0, 0, 0.5);
+        }
+        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -12,66 +44,133 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0f0f23;
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         .container {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            background: var(--bg-primary);
         }
         
         .header {
-            background: linear-gradient(90deg, #1a1a3e 0%, #2d2d5f 100%);
-            padding: 20px;
-            border-bottom: 1px solid #2d2d5f;
-            text-align: center;
+            background: var(--bg-primary);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            background: linear-gradient(135deg, #10a37f 0%, #1a7f64 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .chat-container {
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .header-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-secondary);
+            color: var(--text-primary);
+        }
+        
+        .header-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #ffffff;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-secondary);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-secondary);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+        
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .chat-section {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            background: var(--bg-primary);
         }
         
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
         }
         
         .message {
             display: flex;
             gap: 12px;
-            max-width: 80%;
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.3s ease-out;
         }
         
         .message.user {
-            align-self: flex-end;
             flex-direction: row-reverse;
-        }
-        
-        .message.assistant {
-            align-self: flex-start;
         }
         
         .message-avatar {
@@ -83,365 +182,380 @@
             justify-content: center;
             font-size: 16px;
             flex-shrink: 0;
+            font-weight: 600;
         }
         
         .message.user .message-avatar {
-            background: #10a37f;
-        }
-        
-        .message.assistant .message-avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .message-content {
-            padding: 12px 16px;
-            border-radius: 18px;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-        
-        .message.user .message-content {
-            background: #10a37f;
+            background: var(--accent-primary);
             color: white;
         }
         
+        .message.assistant .message-avatar {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .message-content {
+            flex: 1;
+            line-height: 1.6;
+            word-wrap: break-word;
+            max-width: none;
+        }
+        
+        .message.user .message-content {
+            background: var(--accent-primary);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 18px 18px 4px 18px;
+            max-width: 70%;
+        }
+        
         .message.assistant .message-content {
-            background: #2d2d5f;
-            color: #e5e5e5;
+            background: transparent;
+            color: var(--text-primary);
+            padding: 0;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            color: var(--text-secondary);
+            margin: 60px 0 40px;
+        }
+        
+        .welcome-message h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        
+        .welcome-message p {
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .welcome-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .example-prompt {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        
+        .example-prompt:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-secondary);
+            transform: translateY(-1px);
         }
         
         .input-container {
-            padding: 30px 25px;
-            background: #1a1a3e;
-            border-top: 1px solid #2d2d5f;
+            padding: 24px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-primary);
         }
         
         .input-wrapper {
             position: relative;
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
         }
         
         .input-box {
             width: 100%;
-            padding: 18px 100px 18px 24px;
-            border: 2px solid #2d2d5f;
-            border-radius: 28px;
-            background: #0f0f23;
-            color: white;
-            font-size: 18px;
+            padding: 16px 100px 16px 20px;
+            border: 2px solid var(--border-primary);
+            border-radius: 24px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 16px;
             outline: none;
             resize: none;
-            min-height: 30px;
-            line-height: 1.4;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-height: 24px;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px var(--shadow-light);
         }
         
         .input-box:focus {
-            border-color: #10a37f;
-            box-shadow: 0 6px 20px rgba(16, 163, 127, 0.2);
-            transform: translateY(-2px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         
         .input-box::placeholder {
-            color: #8e8ea0;
+            color: var(--text-tertiary);
+        }
+        
+        .input-actions {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
             font-size: 16px;
         }
         
-        .send-button {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 50%;
-            background: #10a37f;
+        .image-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .image-btn:hover {
+            background: var(--border-secondary);
+            color: var(--text-primary);
+        }
+        
+        .send-btn {
+            background: var(--accent-primary);
             color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            font-size: 18px;
-            box-shadow: 0 2px 8px rgba(16, 163, 127, 0.3);
         }
         
-        .send-button:hover {
-            background: #0d8f6d;
-            transform: translateY(-50%) scale(1.05);
-            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.4);
+        .send-btn:hover {
+            background: var(--accent-secondary);
         }
         
-        .send-button:disabled {
-            background: #2d2d5f;
+        .send-btn:disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-tertiary);
             cursor: not-allowed;
-            transform: translateY(-50%) scale(1);
-            box-shadow: none;
-        }
-        
-        .image-upload-container {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .image-upload-button {
-            position: absolute;
-            right: 60px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 50%;
-            background: #667eea;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            font-size: 18px;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-        
-        .image-upload-button:hover {
-            background: #5a67d8;
-            transform: translateY(-50%) scale(1.05);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-        
-        .image-upload-input {
-            display: none;
-        }
-        
-        .image-preview {
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border: 2px solid #2d2d5f;
-        }
-        
-        .image-prompt-container {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background: #1a1a3e;
-            border-radius: 8px;
-            border: 1px solid #2d2d5f;
-        }
-        
-        .image-prompt-input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #2d2d5f;
-            border-radius: 4px;
-            background: #0f0f23;
-            color: white;
-            font-size: 14px;
-            outline: none;
-        }
-        
-        .image-prompt-input:focus {
-            border-color: #10a37f;
-        }
-        
-        .image-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .image-action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.2s;
-        }
-        
-        .image-action-btn.analyze {
-            background: #10a37f;
-            color: white;
-        }
-        
-        .image-action-btn.analyze:hover {
-            background: #0d8f6d;
-        }
-        
-        .image-action-btn.cancel {
-            background: #ff6b6b;
-            color: white;
-        }
-        
-        .image-action-btn.cancel:hover {
-            background: #e55656;
         }
         
         .typing-indicator {
             display: none;
             align-items: center;
             gap: 12px;
-            max-width: 80%;
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.3s ease-out;
         }
         
         .typing-dots {
-            background: #2d2d5f;
-            padding: 12px 16px;
-            border-radius: 18px;
             display: flex;
             gap: 4px;
+            padding: 12px 0;
         }
         
         .typing-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #8e8ea0;
+            background: var(--text-tertiary);
             animation: typing 1.4s infinite ease-in-out;
         }
         
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         
-        .welcome-message {
-            text-align: center;
-            color: #8e8ea0;
-            margin-top: 40px;
-        }
-        
-        .welcome-examples {
+        .history-sidebar {
+            width: 320px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-primary);
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            position: relative;
         }
         
-        .example-prompt {
-            background: #1a1a3e;
-            border: 1px solid #2d2d5f;
-            border-radius: 20px;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
+        .history-sidebar.open {
+            transform: translateX(0);
         }
         
-        .example-prompt:hover {
-            background: #2d2d5f;
-            border-color: #10a37f;
-        }
-        
-        .tasks-sidebar {
-            position: fixed;
-            right: -300px;
-            top: 0;
-            width: 300px;
-            height: 100vh;
-            background: #1a1a3e;
-            border-left: 1px solid #2d2d5f;
-            transition: right 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-        
-        .tasks-sidebar.open {
-            right: 0;
-        }
-        
-        .sidebar-header {
+        .history-header {
             padding: 20px;
-            border-bottom: 1px solid #2d2d5f;
+            border-bottom: 1px solid var(--border-primary);
+            background: var(--bg-primary);
+        }
+        
+        .history-title {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-        
-        .close-sidebar {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        
-        .task-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #2d2d5f;
-            display: flex;
             justify-content: space-between;
-            align-items: center;
+            margin-bottom: 16px;
         }
         
-        .task-content {
-            flex: 1;
-            margin-right: 10px;
-        }
-        
-        .task-type {
-            font-size: 12px;
-            color: #10a37f;
-            text-transform: uppercase;
+        .history-title h3 {
+            font-size: 16px;
             font-weight: 600;
+            color: var(--text-primary);
         }
         
-        .task-text {
-            margin-top: 4px;
-            color: #e5e5e5;
-        }
-        
-        .task-datetime {
-            font-size: 12px;
-            color: #8e8ea0;
-            margin-top: 4px;
-        }
-        
-        .delete-task {
+        .close-btn {
             background: none;
             border: none;
-            color: #ff6b6b;
+            color: var(--text-secondary);
             cursor: pointer;
+            font-size: 20px;
             padding: 4px;
             border-radius: 4px;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
         }
         
-        .delete-task:hover {
-            background: #2d2d5f;
+        .close-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
         }
         
-        .toggle-tasks {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #10a37f;
-            border: none;
-            color: white;
-            padding: 10px;
-            border-radius: 50%;
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-chip {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
             cursor: pointer;
-            font-size: 16px;
-            z-index: 1001;
+            transition: all 0.2s ease;
         }
         
-        .toggle-tasks:hover {
-            background: #0d8f6d;
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+        
+        .history-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+        
+        .history-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .history-item:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 1px 3px var(--shadow-light);
+        }
+        
+        .history-item .user-msg {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .history-item .ai-msg {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .image-preview-container {
+            display: none;
+            margin-top: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+        }
+        
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .image-prompt-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+        }
+        
+        .image-prompt-input:focus {
+            border-color: var(--accent-primary);
+        }
+        
+        .image-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .image-action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .image-action-btn.analyze {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .image-action-btn.analyze:hover {
+            background: var(--accent-secondary);
+        }
+        
+        .image-action-btn.cancel {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .image-action-btn.cancel:hover {
+            background: var(--border-secondary);
+            color: var(--text-primary);
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes typing {
             0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
-            30% { transform: scale(1.3); opacity: 1; }
+            30% { transform: scale(1.2); opacity: 1; }
         }
         
         ::-webkit-scrollbar {
@@ -449,127 +563,148 @@
         }
         
         ::-webkit-scrollbar-track {
-            background: #1a1a3e;
+            background: var(--bg-secondary);
         }
         
         ::-webkit-scrollbar-thumb {
-            background: #2d2d5f;
+            background: var(--border-secondary);
             border-radius: 3px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: #10a37f;
+            background: var(--text-tertiary);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .history-sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+            }
+            
+            .welcome-examples {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-box {
+                padding: 14px 90px 14px 16px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🤖 Aditya AI</h1>
+            <h1>🧠 Aditya AI</h1>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Toggle theme">
+                    🌙
+                </button>
+                <button class="header-btn" onclick="toggleHistory()" id="historyToggle">
+                    📚 History
+                </button>
+            </div>
         </div>
         
-        <div class="chat-container">
-            <div class="chat-messages" id="chatMessages">
-                <div class="welcome-message">
-                    <h2>👋 Hello! I'm Aditya AI</h2>
-                    <p>I can help you with reminders, scheduling, image analysis, and answer any questions using AI!</p>
+        <div class="main-content">
+            <div class="chat-section">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <h2>Ask me anything</h2>
+                        <p>I'm Aditya AI, your intelligent assistant for questions, reminders, and image analysis</p>
+                        
+                        <div class="welcome-examples">
+                            <div class="example-prompt" onclick="sendExample('Explain data structures and algorithms')">
+                                💻 Data Structures & Algorithms
+                            </div>
+                            <div class="example-prompt" onclick="sendExample('System design interview questions')">
+                                🏗️ System Design Interview
+                            </div>
+                            <div class="example-prompt" onclick="sendExample('Remind me to study tomorrow at 9am')">
+                                📅 Set a reminder
+                            </div>
+                            <div class="example-prompt" onclick="document.getElementById('imageInput').click()">
+                                📷 Analyze an image
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div class="welcome-examples">
-                        <div class="example-prompt" onclick="sendExample('Remind me to call mom tomorrow')">
-                            💬 Remind me to call mom tomorrow
-                        </div>
-                        <div class="example-prompt" onclick="sendExample('Schedule meeting at 3pm')">
-                            📅 Schedule meeting at 3pm
-                        </div>
-                        <div class="example-prompt" onclick="sendExample('Explain quantum computing in simple terms')">
-                            🤖 Explain quantum computing
-                        </div>
-                        <div class="example-prompt" onclick="sendExample('What are the benefits of meditation?')">
-                            🧠 Benefits of meditation?
-                        </div>
-                        <div class="example-prompt" onclick="document.getElementById('imageInput').click()">
-                            📷 Upload & analyze image
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="message-avatar">🧠</div>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="typing-indicator" id="typingIndicator">
-                    <div class="message-avatar">🤖</div>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="userInput" 
+                            class="input-box" 
+                            placeholder="Ask anything..."
+                            rows="1"
+                            onkeydown="handleKeyPress(event)"
+                        ></textarea>
+                        <div class="input-actions">
+                            <button class="action-btn image-btn" onclick="document.getElementById('imageInput').click()" title="Upload Image">
+                                📷
+                            </button>
+                            <button class="action-btn send-btn" onclick="sendMessage()" id="sendButton">
+                                ➤
+                            </button>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)" style="display: none;">
+                        
+                        <div id="imagePreviewContainer" class="image-preview-container">
+                            <img id="imagePreview" class="image-preview" style="display: none;">
+                            <input type="text" id="imagePrompt" class="image-prompt-input" placeholder="What would you like to know about this image?" value="Describe this image in detail.">
+                            <div class="image-actions">
+                                <button class="image-action-btn analyze" onclick="analyzeImage()">Analyze Image</button>
+                                <button class="image-action-btn cancel" onclick="cancelImageUpload()">Cancel</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="input-container">
-                <div class="input-wrapper">
-                    <div class="image-upload-container">
-                        <textarea 
-                            id="userInput" 
-                            class="input-box" 
-                            placeholder="Type your message here or upload an image..."
-                            rows="1"
-                            onkeydown="handleKeyPress(event)"
-                        ></textarea>
-                        <button class="image-upload-button" onclick="document.getElementById('imageInput').click()" title="Upload Image">
-                            📷
-                        </button>
-                        <input type="file" id="imageInput" class="image-upload-input" accept="image/*" onchange="handleImageUpload(event)">
-                        <button class="send-button" onclick="sendMessage()" id="sendButton">
-                            ➤
-                        </button>
+            <div class="history-sidebar" id="historySidebar">
+                <div class="history-header">
+                    <div class="history-title">
+                        <h3>Chat History</h3>
+                        <button class="close-btn" onclick="toggleHistory()">✕</button>
                     </div>
-                    
-                    <!-- Image preview and prompt container -->
-                    <div id="imagePreviewContainer" class="image-prompt-container">
-                        <img id="imagePreview" class="image-preview" style="display: none;">
-                        <input type="text" id="imagePrompt" class="image-prompt-input" placeholder="What would you like to know about this image?" value="Describe this image in detail.">
-                        <div class="image-actions">
-                            <button class="image-action-btn analyze" onclick="analyzeImage()">Analyze Image</button>
-                            <button class="image-action-btn cancel" onclick="cancelImageUpload()">Cancel</button>
-                        </div>
+                    <div class="filter-chips">
+                        <div class="filter-chip active" data-filter="all">All</div>
+                        <div class="filter-chip" data-filter="ai">AI</div>
+                        <div class="filter-chip" data-filter="task">Tasks</div>
+                        <div class="filter-chip" data-filter="image">Images</div>
+                    </div>
+                </div>
+                
+                <div class="history-content" id="historyContent">
+                    <div style="text-align: center; color: #6b7280; padding: 40px 20px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📚</div>
+                        <p>Your conversation history will appear here</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <button class="toggle-tasks" onclick="toggleTasks()">📋</button>
-    
-    <div class="tasks-sidebar" id="tasksSidebar">
-        <div class="sidebar-header">
-            <h3>📋 Tasks & Reminders</h3>
-            <button class="close-sidebar" onclick="toggleTasks()">✕</button>
-        </div>
-        <div id="tasksList">
-            {% if tasks %}
-                {% for task in tasks %}
-                <div class="task-item" data-task-id="{{ task.id }}">
-                    <div class="task-content">
-                        <div class="task-type">{{ task.task_type }}</div>
-                        <div class="task-text">{{ task.content }}</div>
-                        {% if task.datetime %}
-                        <div class="task-datetime">📅 {{ task.datetime }}</div>
-                        {% endif %}
-                    </div>
-                    <button class="delete-task" data-task-id="{{ task.id }}" onclick="deleteTask(this.dataset.taskId)">🗑️</button>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="task-item">
-                    <div class="task-content">
-                        <div class="task-text" style="color: #8e8ea0; text-align: center;">
-                            No tasks yet. Try asking me to remind you about something!
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
 
     <script>
+        // Global variables
+        let selectedImageFile = null;
+        let currentFilter = 'all';
+        let allHistoryItems = [];
+
         function handleKeyPress(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
@@ -592,11 +727,7 @@
             
             addMessage(message, 'user');
             showTypingIndicator();
-            
-            const welcomeMsg = document.querySelector('.welcome-message');
-            if (welcomeMsg) {
-                welcomeMsg.style.display = 'none';
-            }
+            hideWelcomeMessage();
             
             try {
                 const response = await fetch('/ask', {
@@ -615,11 +746,6 @@
                     addMessage(`Sorry, I encountered an error: ${data.error}`, 'assistant');
                 } else {
                     addMessage(data.reply, 'assistant');
-                    
-                    // Update tasks sidebar if it was a task action
-                    if (data.type === 'task_action' && data.tasks) {
-                        updateTasksList(data.tasks);
-                    }
                 }
             } catch (error) {
                 hideTypingIndicator();
@@ -634,7 +760,7 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
             
-            const avatar = sender === 'user' ? '👤' : '🤖';
+            const avatar = sender === 'user' ? '👤' : '🧠';
             
             messageDiv.innerHTML = `
                 <div class="message-avatar">${avatar}</div>
@@ -655,83 +781,36 @@
             document.getElementById('typingIndicator').style.display = 'none';
         }
         
-        function toggleTasks() {
-            const sidebar = document.getElementById('tasksSidebar');
+        function hideWelcomeMessage() {
+            const welcomeMsg = document.querySelector('.welcome-message');
+            if (welcomeMsg) {
+                welcomeMsg.style.display = 'none';
+            }
+        }
+        
+        function toggleHistory() {
+            const sidebar = document.getElementById('historySidebar');
+            const toggle = document.getElementById('historyToggle');
+            
             sidebar.classList.toggle('open');
-        }
-        
-        function updateTasksList(tasks) {
-            const tasksList = document.getElementById('tasksList');
+            toggle.classList.toggle('active');
             
-            if (!tasks || tasks.length === 0) {
-                tasksList.innerHTML = `
-                    <div class="task-item">
-                        <div class="task-content">
-                            <div class="task-text" style="color: #8e8ea0; text-align: center;">
-                                No tasks yet. Try asking me to remind you about something!
-                            </div>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            tasksList.innerHTML = tasks.map(task => `
-                <div class="task-item" data-task-id="${task.id}">
-                    <div class="task-content">
-                        <div class="task-type">${task.task_type}</div>
-                        <div class="task-text">${task.content}</div>
-                        ${task.datetime ? `<div class="task-datetime">📅 ${task.datetime}</div>` : ''}
-                    </div>
-                    <button class="delete-task" onclick="deleteTask(${task.id})">🗑️</button>
-                </div>
-            `).join('');
-        }
-        
-        async function deleteTask(taskId) {
-            try {
-                const response = await fetch(`/delete_task/${taskId}`, {
-                    method: 'DELETE',
-                });
-                
-                if (response.ok) {
-                    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-                    if (taskElement) {
-                        taskElement.remove();
-                    }
-                    
-                    const tasksList = document.getElementById('tasksList');
-                    if (tasksList.children.length === 0) {
-                        updateTasksList([]);
-                    }
-                } else {
-                    alert('Failed to delete task');
-                }
-            } catch (error) {
-                alert('Error deleting task');
+            if (sidebar.classList.contains('open')) {
+                loadHistory();
             }
         }
         
-        document.getElementById('userInput').addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-        });
-        
-        // Image upload and analysis functions
-        let selectedImageFile = null;
-        
+        // Image handling functions
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
             
-            // Validate file type
             const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/bmp', 'image/webp'];
             if (!allowedTypes.includes(file.type)) {
-                alert('Please select a valid image file (PNG, JPG, JPEG, GIF, BMP, WEBP)');
+                alert('Please select a valid image file');
                 return;
             }
             
-            // Validate file size (16MB max)
             if (file.size > 16 * 1024 * 1024) {
                 alert('Image file is too large. Please select an image smaller than 16MB.');
                 return;
@@ -739,17 +818,13 @@
             
             selectedImageFile = file;
             
-            // Create preview
             const reader = new FileReader();
             reader.onload = function(e) {
                 const preview = document.getElementById('imagePreview');
                 preview.src = e.target.result;
                 preview.style.display = 'block';
                 
-                // Show the image prompt container
                 document.getElementById('imagePreviewContainer').style.display = 'block';
-                
-                // Focus on the prompt input
                 document.getElementById('imagePrompt').focus();
             };
             reader.readAsDataURL(file);
@@ -771,22 +846,13 @@
             
             const prompt = document.getElementById('imagePrompt').value.trim() || 'Describe this image in detail.';
             
-            // Create FormData for file upload
             const formData = new FormData();
             formData.append('image', selectedImageFile);
             formData.append('prompt', prompt);
             
-            // Add user message showing image upload
             addMessage(`📷 Analyzing image: "${prompt}"`, 'user');
             showTypingIndicator();
-            
-            // Hide welcome message
-            const welcomeMsg = document.querySelector('.welcome-message');
-            if (welcomeMsg) {
-                welcomeMsg.style.display = 'none';
-            }
-            
-            // Clear the image upload
+            hideWelcomeMessage();
             cancelImageUpload();
             
             try {
@@ -806,18 +872,129 @@
                 }
             } catch (error) {
                 hideTypingIndicator();
-                addMessage('Sorry, I\'m having trouble analyzing the image right now. Please try again.', 'assistant');
+                addMessage('Sorry, I\'m having trouble analyzing the image right now.', 'assistant');
             }
         }
         
-        // Allow Enter key to analyze image when prompt is focused
-        document.addEventListener('keydown', function(event) {
-            if (event.target.id === 'imagePrompt' && event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                analyzeImage();
+        // History functions
+        async function loadHistory() {
+            try {
+                const response = await fetch('/chat_history?limit=50');
+                const data = await response.json();
+                
+                const historyContent = document.getElementById('historyContent');
+                
+                if (data.history && data.history.length > 0) {
+                    allHistoryItems = data.history;
+                    displayFilteredHistory();
+                } else {
+                    historyContent.innerHTML = `
+                        <div style="text-align: center; color: #6b7280; padding: 40px 20px;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">📚</div>
+                            <p>Your conversation history will appear here</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
             }
+        }
+        
+        function displayFilteredHistory() {
+            const historyContent = document.getElementById('historyContent');
+            
+            let filteredItems = allHistoryItems;
+            
+            if (currentFilter !== 'all') {
+                filteredItems = filteredItems.filter(item => {
+                    if (currentFilter === 'ai') return item.message_type === 'ai_question';
+                    if (currentFilter === 'task') return item.message_type === 'task';
+                    if (currentFilter === 'image') return item.message_type === 'image';
+                    return true;
+                });
+            }
+            
+            historyContent.innerHTML = '';
+            
+            filteredItems.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.onclick = () => restoreMessage(item.user_message);
+                
+                historyItem.innerHTML = `
+                    <div class="user-msg">${item.user_message}</div>
+                    <div class="ai-msg">${item.ai_response}</div>
+                `;
+                
+                historyContent.appendChild(historyItem);
+            });
+        }
+        
+        function restoreMessage(message) {
+            document.getElementById('userInput').value = message;
+            document.getElementById('userInput').focus();
+        }
+        
+        // Auto-resize textarea
+        document.getElementById('userInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
         
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggle.innerHTML = '🌙';
+                themeToggle.title = 'Switch to dark mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '☀️';
+                themeToggle.title = 'Switch to light mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '☀️';
+                themeToggle.title = 'Switch to light mode';
+            } else {
+                document.body.removeAttribute('data-theme');
+                themeToggle.innerHTML = '🌙';
+                themeToggle.title = 'Switch to dark mode';
+            }
+        }
+        
+        // Setup filter chips
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterChips = document.querySelectorAll('.filter-chip');
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    filterChips.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentFilter = this.dataset.filter;
+                    displayFilteredHistory();
+                });
+            });
+            
+            // Initialize theme on DOM content loaded
+            initializeTheme();
+        });
+        
+        // Focus input on load
         window.addEventListener('load', function() {
             document.getElementById('userInput').focus();
         });
